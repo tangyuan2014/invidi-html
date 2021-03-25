@@ -121,13 +121,50 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 var content = document.getElementById('video_player');
 var videoContainer = document.getElementById('video_container');
 var adContainer = document.getElementById('adContainer');
+var initialPlay = true;
+
+function onPlay() {
+  if (initialPlay) {
+    initialPlay = false;
+    content.pause(); // Pause the content so we can play pre-rolls
+
+    adPlayer.startSession(session, adPlayerListener); // Start the Ad Player event flow
+  } else {
+    // When the content is resumed, call contentStarted
+    adPlayer.contentStarted();
+  }
+}
+
+function onTimeUpdate() {
+  adPlayer.contentPositionChanged(content.currentTime);
+}
+
+function onPause() {
+  // Let the Ad Player know the content is paused
+  adPlayer.contentPaused();
+}
+
+function onEnded() {
+  //this is key to make post roll work, the thing is when a video end,
+  //it will first trigger a 'pause' event and then an 'end' event. The pause
+  //event would trigger adPlayer to set the pulse status to pause, but the
+  //following end event would check if the status is pause, if so it will throw
+  //an exception and then skip the post roll.
+  adPlayer.contentStarted();
+  adPlayer.contentFinished();
+}
+
+content.addEventListener('play', onPlay);
+content.addEventListener('pause', onPause);
+content.addEventListener('timeupdate', onTimeUpdate);
+content.addEventListener('ended', onEnded); //set the pulse host
+
 OO.Pulse.setPulseHost('http://pulse-demo.videoplaza.tv');
 var contentMetadata = {
   tags: ['cat_preroll', 'cat_midroll', 'cat_postroll']
 };
 var requestSettings = {
-  linearPlaybackPositions: [10] // insertionPointFilter: ['ON_CONTENT_END']
-
+  linearPlaybackPositions: [10]
 };
 var session = OO.Pulse.createSession(contentMetadata, requestSettings);
 var adPlayer = OO.Pulse.createAdPlayer({
@@ -161,38 +198,6 @@ var adPlayerListener = {
     adPlayer.adClickThroughOpened();
   }
 };
-var initialPlay = true;
-
-function onPlay() {
-  if (initialPlay) {
-    initialPlay = false;
-    content.pause(); // Pause the content so we can play pre-rolls
-
-    adPlayer.startSession(session, adPlayerListener); // Start the Ad Player event flow
-  } else {
-    // When the content is resumed, call contentStarted
-    adPlayer.startSession(session, adPlayerListener);
-    adPlayer.contentStarted();
-  }
-}
-
-function onTimeUpdate() {
-  adPlayer.contentPositionChanged(content.currentTime);
-}
-
-function onPause() {
-  // Let the Ad Player know the content is paused
-  adPlayer.contentPaused();
-}
-
-function onEnded() {
-  adPlayer.contentFinished();
-}
-
-content.addEventListener('play', onPlay);
-content.addEventListener('pause', onPause);
-content.addEventListener('timeupdate', onTimeUpdate);
-content.addEventListener('ended', onEnded);
 },{}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -221,7 +226,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59835" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62372" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
