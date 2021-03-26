@@ -42,7 +42,7 @@ content.addEventListener('ended', onEnded);
 OO.Pulse.setPulseHost('http://pulse-demo.videoplaza.tv');
 
 var contentMetadata = {
-  tags: ['cat_preroll', 'cat_midroll', 'cat_postroll']
+  tags: ['house', 'cat_midroll', 'cat_postroll']
 };
 
 var requestSettings = {

@@ -161,7 +161,7 @@ content.addEventListener('ended', onEnded); //set the pulse host
 
 OO.Pulse.setPulseHost('http://pulse-demo.videoplaza.tv');
 var contentMetadata = {
-  tags: ['cat_preroll', 'cat_midroll', 'cat_postroll']
+  tags: ['house', 'cat_midroll', 'cat_postroll']
 };
 var requestSettings = {
   linearPlaybackPositions: [10]
@@ -226,7 +226,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62372" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59990" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
